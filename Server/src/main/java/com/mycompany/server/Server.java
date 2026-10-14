@@ -8,9 +8,9 @@ package com.mycompany.server;
  *
  * @author alberto
  */
-public class Server {
+public class Server{
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         Finestra finestra = new Finestra();
         finestra.setVisible(true);
     }

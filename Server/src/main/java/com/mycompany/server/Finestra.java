@@ -26,7 +26,6 @@ public class Finestra extends JFrame{
     private JTextField campoNumeroGiocatori;
     private JTextField campoDifferenza;
     private JTextField campoPorta;
-
     private JTextArea areaLog;
 
     public Finestra(){
@@ -101,7 +100,6 @@ public class Finestra extends JFrame{
         areaLog.setText("Avvio server sulla porta " + porta + "...\n");
 
         new Thread(new Runnable(){
-
             @Override
             public void run(){
                 avviaConnessioni(ngg, dml, porta);
@@ -125,20 +123,13 @@ public class Finestra extends JFrame{
                 GestoreClient gestore = new GestoreClient(socket, matchmaker);
                 new Thread(gestore).start();
             }
-
+            
         }catch(IOException e){
             scrivi("Errore server: " + e.getMessage() + "\n");
         }
     }
 
-    private void scrivi(String messaggio){
-
-        javax.swing.SwingUtilities.invokeLater(new Runnable(){
-
-            @Override
-            public void run(){
-                areaLog.append(messaggio);
-            }
-        });
+    private void scrivi(String messaggio) {
+        areaLog.setText(areaLog.getText() + messaggio);
     }
 }

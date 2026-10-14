@@ -10,11 +10,10 @@ package com.mycompany.server;
  */
 public class Giocatore{
 
-    public String nickname;
-    public int livello;
-    public String ip;
-
-    public String lista;
+    private String nickname;
+    private int livello;
+    private String ip;
+    private String lista;
 
     public Giocatore(String nickname, int livello, String ip){
         this.nickname = nickname;
@@ -35,6 +34,10 @@ public class Giocatore{
         this.ip = ip;
     }
     
+    public void setLista(String lista){
+        this.lista = lista;
+    }
+    
     public String getNickname(){
         return nickname;
     }
@@ -45,5 +48,9 @@ public class Giocatore{
     
     public String getIp(){
         return ip;
+    }
+    
+    public String getLista(){
+        return lista;
     }
 }

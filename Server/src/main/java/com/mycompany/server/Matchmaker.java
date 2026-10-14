@@ -24,67 +24,61 @@ public class Matchmaker {
         this.dml = dml;
     }
 
-    public synchronized void registraEAttendi(Giocatore giocatore)
-            throws InterruptedException {
+    public void Attesa(Giocatore giocatore)
+            throws InterruptedException{
 
         pool.add(giocatore);
 
-        System.out.println(
-            "Giocatore in attesa: " + giocatore.nickname
-            + " - livello " + giocatore.livello
-            + " - pool: " + pool.size()
-        );
+        System.out.println("Giocatore in attesa: " + giocatore.getNickname() + " - livello " + giocatore.getLivello() + " - pool: " + pool.size());
 
         provaACreareGruppi();
 
-        while (giocatore.lista == null) {
-            wait();
+        while(giocatore.getLista() == null){
+            Thread.sleep(50);
         }
     }
 
-    private void provaACreareGruppi() {
+    private void provaACreareGruppi(){
 
         boolean gruppoTrovato = true;
 
-        while (gruppoTrovato) {
+        while(gruppoTrovato){
             gruppoTrovato = false;
 
-            if (pool.size() < ngg) {
+            if(pool.size() < ngg){
                 return;
             }
 
             List<Giocatore> ordinati = new ArrayList<>(pool);
 
             ordinati.sort(
-                Comparator.comparingInt(giocatore -> giocatore.livello)
+                Comparator.comparingInt(giocatore -> giocatore.getLivello())
             );
 
-            for (int i = 0; i <= ordinati.size() - ngg; i++) {
+            for(int i = 0; i <= ordinati.size() - ngg; i++){
 
                 Giocatore primo = ordinati.get(i);
                 Giocatore ultimo = ordinati.get(i + ngg - 1);
 
-                int differenza = ultimo.livello - primo.livello;
+                int differenza = ultimo.getLivello() - primo.getLivello();
 
-                if (differenza <= dml) {
+                if(differenza <= dml){
 
                     List<Giocatore> gruppo = new ArrayList<>();
 
-                    for (int j = 0; j < ngg; j++) {
+                    for(int j = 0; j < ngg; j++){
                         gruppo.add(ordinati.get(i + j));
                     }
 
                     String lista = creaLista(gruppo);
 
-                    for (Giocatore giocatore : gruppo) {
-                        giocatore.lista = lista;
+                    for(Giocatore giocatore : gruppo){
+                        giocatore.setLista(lista);
                         pool.remove(giocatore);
                     }
 
                     System.out.println("Gruppo creato:");
                     System.out.println(lista);
-
-                    notifyAll();
 
                     gruppoTrovato = true;
                     break;
@@ -93,19 +87,14 @@ public class Matchmaker {
         }
     }
 
-    private String creaLista(List<Giocatore> gruppo) {
+    private String creaLista(List<Giocatore> gruppo){
 
-        StringBuilder risultato = new StringBuilder();
+        String risultato = "";
 
-        for (Giocatore giocatore : gruppo) {
-            risultato.append(giocatore.nickname)
-                     .append(" | IP: ")
-                     .append(giocatore.ip)
-                     .append(" | Livello: ")
-                     .append(giocatore.livello)
-                     .append("\n");
+        for (Giocatore giocatore : gruppo){
+            risultato += giocatore.getNickname() + " | IP: " + giocatore.getIp() + " | Livello: " + giocatore.getLivello() + "\n";
         }
 
-        return risultato.toString();
+        return risultato;
     }
 }

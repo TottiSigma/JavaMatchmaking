@@ -107,9 +107,7 @@ public class Finestra extends JFrame{
 
         utenti = new String[numero];
         risultati = new String[numero];
-
         String testo = "";
-
         for(int i = 0; i < numero; i++){
 
             String nickname = nomi[random.nextInt(nomi.length)] + random.nextInt(100);
@@ -140,9 +138,7 @@ public class Finestra extends JFrame{
         }
 
         for(int i = 0; i < utenti.length; i++){
-
             int posizione = i;
-
             new Thread(new Runnable(){
 
                 @Override
@@ -159,35 +155,25 @@ public class Finestra extends JFrame{
 
         try{ 
             Socket socket = new Socket(ip, 50000);
-
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-
             BufferedReader in = new BufferedReader(
                 new InputStreamReader(socket.getInputStream())
             );
 
             out.println(utente);
-
             String riga;
 
             while((riga = in.readLine())!=null){
-
                 if (riga.equals("FINE")){
                     break;
                 }
-
                 messaggi = messaggi + riga + "\n";
             }
-
             messaggi = messaggi + "Connessione terminata.\n";
-
             socket.close();
-
         }catch(IOException e){
-
             messaggi = messaggi + "Errore: " + e.getMessage() + "\n";
         }
-
         risultati[posizione] = messaggi;
 
         aggiornaRisultati();
@@ -196,14 +182,11 @@ public class Finestra extends JFrame{
     private void aggiornaRisultati(){
 
         String testo = "";
-
         for(int i = 0; i < risultati.length; i++){
-
             if(risultati[i] != null){
                 testo = testo + risultati[i] + "\n";
             }
         }
-
         areaRisultati.setText(testo);
     }
 }

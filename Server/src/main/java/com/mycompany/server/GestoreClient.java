@@ -16,8 +16,8 @@ import java.net.Socket;
  */
 public class GestoreClient implements Runnable{
 
-    private final Socket s;
-    private final Matchmaker matchmaker;
+    private Socket s;
+    private Matchmaker matchmaker;
 
     public GestoreClient(Socket s, Matchmaker matchmaker){
         this.s = s;
@@ -27,26 +27,22 @@ public class GestoreClient implements Runnable{
     @Override
     public void run(){
 
-        try(
-            BufferedReader in = new BufferedReader(
-                new InputStreamReader(s.getInputStream())
-            );
+        try{
+            BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+            PrintWriter out = new PrintWriter(s.getOutputStream(), true);
 
-            PrintWriter out = new PrintWriter(
-                s.getOutputStream(),
-                true
-            )
-        ){
             String riga = in.readLine();
 
-            if(riga == null || riga.trim().isEmpty()){
+            if (riga == null || riga.equals("")){
+                s.close();
                 return;
             }
 
-            String[] parti = riga.trim().split("\\s+");
+            String parti[] = riga.split(" ");
 
-            if(parti.length != 2){
+            if (parti.length != 2){
                 out.println("ERRORE: invia nickname livello");
+                s.close();
                 return;
             }
 
@@ -55,30 +51,24 @@ public class GestoreClient implements Runnable{
 
             String ip = s.getInetAddress().getHostAddress();
 
-            Giocatore giocatore = new Giocatore(nickname,livello,ip);
+            Giocatore giocatore = new Giocatore(nickname, livello, ip);
 
-            matchmaker.registraEAttendi(giocatore);
+            matchmaker.Attesa(giocatore);
 
             out.println("GRUPPO TROVATO");
-            out.println(giocatore.lista);
+            out.println(giocatore.getLista());
             out.println("FINE");
 
+            s.close();
+
         }catch(NumberFormatException e){
-            System.out.println("Livello non valido.");
+            System.out.println("Livello non valido");
 
         }catch(InterruptedException e){
-            Thread.currentThread().interrupt();
-            System.out.println("Thread interrotto.");
+            System.out.println("Thread interrotto");
 
         }catch(IOException e){
             System.out.println("Client disconnesso: " + e.getMessage());
-
-        }finally{
-            try{
-                s.close();
-            }catch(IOException e){
-                System.out.println("Errore chiusura socket.");
-            }
         }
     }
 }
