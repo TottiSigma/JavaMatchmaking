@@ -14,20 +14,20 @@ import java.net.Socket;
  *
  * @author User
  */
-public class GestoreClient implements Runnable {
+public class GestoreClient implements Runnable{
 
     private final Socket s;
     private final Matchmaker matchmaker;
 
-    public GestoreClient(Socket s, Matchmaker matchmaker) {
+    public GestoreClient(Socket s, Matchmaker matchmaker){
         this.s = s;
         this.matchmaker = matchmaker;
     }
 
     @Override
-    public void run() {
+    public void run(){
 
-        try (
+        try(
             BufferedReader in = new BufferedReader(
                 new InputStreamReader(s.getInputStream())
             );
@@ -36,16 +36,16 @@ public class GestoreClient implements Runnable {
                 s.getOutputStream(),
                 true
             )
-        ) {
+        ){
             String riga = in.readLine();
 
-            if (riga == null || riga.trim().isEmpty()) {
+            if(riga == null || riga.trim().isEmpty()){
                 return;
             }
 
             String[] parti = riga.trim().split("\\s+");
 
-            if (parti.length != 2) {
+            if(parti.length != 2){
                 out.println("ERRORE: invia nickname livello");
                 return;
             }
@@ -55,11 +55,7 @@ public class GestoreClient implements Runnable {
 
             String ip = s.getInetAddress().getHostAddress();
 
-            Giocatore giocatore = new Giocatore(
-                nickname,
-                livello,
-                ip
-            );
+            Giocatore giocatore = new Giocatore(nickname,livello,ip);
 
             matchmaker.registraEAttendi(giocatore);
 
@@ -67,22 +63,20 @@ public class GestoreClient implements Runnable {
             out.println(giocatore.lista);
             out.println("FINE");
 
-        } catch (NumberFormatException e) {
+        }catch(NumberFormatException e){
             System.out.println("Livello non valido.");
 
-        } catch (InterruptedException e) {
+        }catch(InterruptedException e){
             Thread.currentThread().interrupt();
             System.out.println("Thread interrotto.");
 
-        } catch (IOException e) {
-            System.out.println(
-                "Client disconnesso: " + e.getMessage()
-            );
+        }catch(IOException e){
+            System.out.println("Client disconnesso: " + e.getMessage());
 
-        } finally {
-            try {
+        }finally{
+            try{
                 s.close();
-            } catch (IOException e) {
+            }catch(IOException e){
                 System.out.println("Errore chiusura socket.");
             }
         }

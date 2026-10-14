@@ -17,7 +17,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,19 +24,17 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class Finestra extends JFrame {
+public class Finestra extends JFrame{
 
     private JTextField campoIp;
     private JTextField campoPorta;
     private JTextField campoNickname;
     private JTextField campoLivello;
-
     private JTextArea areaMessaggi;
 
-    public Finestra() {
+    public Finestra(){
 
         super("Client");
-
         setSize(550, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -51,7 +48,6 @@ public class Finestra extends JFrame {
         areaMessaggi.setEditable(false);
 
         JButton bottone = new JButton("Connetti");
-
         bottone.addActionListener(e -> connetti());
 
         JPanel pannelloCampi = new JPanel(new GridLayout(4, 2, 10, 10));
@@ -78,14 +74,14 @@ public class Finestra extends JFrame {
         add(new JScrollPane(areaMessaggi), BorderLayout.CENTER);
     }
 
-    private void connetti() {
+    private void connetti(){
 
         String ip = campoIp.getText().trim();
         String testoPorta = campoPorta.getText().trim();
         String nickname = campoNickname.getText().trim();
         String testoLivello = campoLivello.getText().trim();
 
-        if (testoPorta.isEmpty() || nickname.isEmpty() || testoLivello.isEmpty()) {
+        if(testoPorta.isEmpty() || nickname.isEmpty() || testoLivello.isEmpty()){
             areaMessaggi.setText("Compila porta, nickname e livello.");
             return;
         }
@@ -93,46 +89,37 @@ public class Finestra extends JFrame {
         int porta;
         int livello;
 
-        try {
+        try{
             porta = Integer.parseInt(testoPorta);
             livello = Integer.parseInt(testoLivello);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException e){
             areaMessaggi.setText("Porta e livello devono essere numeri.");
             return;
         }
 
-        try {
-
+        try{
             Socket socket = new Socket(ip, porta);
 
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-
             BufferedReader in = new BufferedReader(
-                new InputStreamReader(socket.getInputStream())
+                    new InputStreamReader(socket.getInputStream())
             );
 
             areaMessaggi.setText("Connesso al server.\n");
-            areaMessaggi.append("Richiesta inviata...\n");
 
             out.println(nickname + " " + livello);
 
             String riga;
-
-            while ((riga = in.readLine()) != null) {
-
-                if (riga.equals("FINE")) {
+            while((riga = in.readLine()) != null){
+                if(riga.equals("FINE")){
                     break;
                 }
-
                 areaMessaggi.append(riga + "\n");
             }
 
-            areaMessaggi.append("Connessione terminata.");
-
             socket.close();
 
-        } catch (IOException e) {
-
+        }catch(IOException e){
             areaMessaggi.setText("Errore client: " + e.getMessage());
         }
     }

@@ -21,7 +21,7 @@ import java.net.Socket;
  *
  * @author User
  */
-public class Finestra extends JFrame {
+public class Finestra extends JFrame{
 
     private JTextField campoNumeroGiocatori;
     private JTextField campoDifferenza;
@@ -29,7 +29,7 @@ public class Finestra extends JFrame {
 
     private JTextArea areaLog;
 
-    public Finestra() {
+    public Finestra(){
 
         super("Server Matchmaking");
 
@@ -69,16 +69,13 @@ public class Finestra extends JFrame {
         add(new JScrollPane(areaLog), BorderLayout.CENTER);
     }
 
-    private void avviaServer() {
+    private void avviaServer(){
 
         String testoNumeroGiocatori = campoNumeroGiocatori.getText().trim();
         String testoDifferenza = campoDifferenza.getText().trim();
         String testoPorta = campoPorta.getText().trim();
 
-        if (testoNumeroGiocatori.isEmpty()
-                || testoDifferenza.isEmpty()
-                || testoPorta.isEmpty()) {
-
+        if(testoNumeroGiocatori.isEmpty() || testoDifferenza.isEmpty() || testoPorta.isEmpty()){
             areaLog.setText("Compila tutti i campi.");
             return;
         }
@@ -87,64 +84,59 @@ public class Finestra extends JFrame {
         int dml;
         int porta;
 
-        try {
+        try{
             ngg = Integer.parseInt(testoNumeroGiocatori);
             dml = Integer.parseInt(testoDifferenza);
             porta = Integer.parseInt(testoPorta);
-        } catch (NumberFormatException e) {
+        }catch(NumberFormatException e){
             areaLog.setText("Inserisci solo numeri interi.");
             return;
         }
 
-        if (ngg < 2) {
+        if(ngg < 2){
             areaLog.setText("Il numero di giocatori deve essere almeno 2.");
             return;
         }
 
         areaLog.setText("Avvio server sulla porta " + porta + "...\n");
 
-        new Thread(new Runnable() {
+        new Thread(new Runnable(){
 
             @Override
-            public void run() {
+            public void run(){
                 avviaConnessioni(ngg, dml, porta);
             }
         }).start();
     }
 
-    private void avviaConnessioni(int ngg, int dml, int porta) {
+    private void avviaConnessioni(int ngg, int dml, int porta){
 
         Matchmaker matchmaker = new Matchmaker(ngg, dml);
 
-        try (ServerSocket socketAccettazione = new ServerSocket(porta)) {
+        try(ServerSocket socketAccettazione = new ServerSocket(porta)){
 
             scrivi("Server avviato sulla porta " + porta + "\n");
             scrivi("ngg = " + ngg + ", dml = " + dml + "\n");
 
-            while (true) {
-
+            while(true){
                 Socket socket = socketAccettazione.accept();
-
                 String ip = socket.getInetAddress().getHostAddress();
-
                 scrivi("Client connesso: " + ip + "\n");
-
                 GestoreClient gestore = new GestoreClient(socket, matchmaker);
-
                 new Thread(gestore).start();
             }
 
-        } catch (IOException e) {
+        }catch(IOException e){
             scrivi("Errore server: " + e.getMessage() + "\n");
         }
     }
 
-    private void scrivi(String messaggio) {
+    private void scrivi(String messaggio){
 
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+        javax.swing.SwingUtilities.invokeLater(new Runnable(){
 
             @Override
-            public void run() {
+            public void run(){
                 areaLog.append(messaggio);
             }
         });

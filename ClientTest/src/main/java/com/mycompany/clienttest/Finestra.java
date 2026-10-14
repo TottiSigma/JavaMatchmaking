@@ -24,7 +24,7 @@ import java.util.Random;
  *
  * @author User
  */
-public class Finestra extends JFrame {
+public class Finestra extends JFrame{
 
     private JTextField campoIp;
     private JTextField campoNumeroUtenti;
@@ -35,14 +35,10 @@ public class Finestra extends JFrame {
     private String[] utenti;
     private String[] risultati;
 
-    private String[] nomi = {
-        "Alberto", "Luca", "Marco", "Giulia", "Sara",
-        "Andrea", "Matteo", "Chiara", "Davide", "Elisa"
-    };
-
+    private String[] nomi = {"Alberto", "Luca", "Marco", "Giulia", "Sara", "Andrea", "Matteo", "Chiara", "Davide", "Elisa"};
     private Random random = new Random();
 
-    public Finestra() {
+    public Finestra(){
 
         super("Test matchmaking");
 
@@ -96,15 +92,15 @@ public class Finestra extends JFrame {
         generaUtenti();
     }
 
-    private void generaUtenti() {
+    private void generaUtenti(){
 
         String testoNumero = campoNumeroUtenti.getText().trim();
 
         int numero;
 
-        try {
+        try{
             numero = Integer.parseInt(testoNumero);
-        } catch (NumberFormatException e) {
+        }catch(NumberFormatException e){
             areaUtenti.setText("Inserisci un numero valido.");
             return;
         }
@@ -114,7 +110,7 @@ public class Finestra extends JFrame {
 
         String testo = "";
 
-        for (int i = 0; i < numero; i++) {
+        for(int i = 0; i < numero; i++){
 
             String nickname = nomi[random.nextInt(nomi.length)] + random.nextInt(100);
             int livello = 1 + random.nextInt(50);
@@ -129,42 +125,39 @@ public class Finestra extends JFrame {
         areaRisultati.setText("");
     }
 
-    private void inviaUtenti() {
+    private void inviaUtenti(){
 
         String ip = campoIp.getText().trim();
 
-        if (ip.isEmpty()) {
+        if(ip.isEmpty()){
             areaRisultati.setText("Inserisci l'IP del server.");
             return;
         }
 
-        if (utenti == null || utenti.length == 0) {
+        if(utenti == null || utenti.length == 0){
             areaRisultati.setText("Genera prima gli utenti.");
             return;
         }
 
-        for (int i = 0; i < utenti.length; i++) {
+        for(int i = 0; i < utenti.length; i++){
 
             int posizione = i;
 
-            new Thread(new Runnable() {
+            new Thread(new Runnable(){
 
                 @Override
-                public void run() {
+                public void run(){
                     connettiUtente(ip, posizione);
                 }
             }).start();
         }
     }
 
-    private void connettiUtente(String ip, int posizione) {
-
+    private void connettiUtente(String ip, int posizione){
         String utente = utenti[posizione];
-
         String messaggi = "UTENTE: " + utente + "\n";
 
-        try {
-
+        try{ 
             Socket socket = new Socket(ip, 50000);
 
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -177,9 +170,9 @@ public class Finestra extends JFrame {
 
             String riga;
 
-            while ((riga = in.readLine()) != null) {
+            while((riga = in.readLine())!=null){
 
-                if (riga.equals("FINE")) {
+                if (riga.equals("FINE")){
                     break;
                 }
 
@@ -190,7 +183,7 @@ public class Finestra extends JFrame {
 
             socket.close();
 
-        } catch (IOException e) {
+        }catch(IOException e){
 
             messaggi = messaggi + "Errore: " + e.getMessage() + "\n";
         }
@@ -200,13 +193,13 @@ public class Finestra extends JFrame {
         aggiornaRisultati();
     }
 
-    private void aggiornaRisultati() {
+    private void aggiornaRisultati(){
 
         String testo = "";
 
-        for (int i = 0; i < risultati.length; i++) {
+        for(int i = 0; i < risultati.length; i++){
 
-            if (risultati[i] != null) {
+            if(risultati[i] != null){
                 testo = testo + risultati[i] + "\n";
             }
         }

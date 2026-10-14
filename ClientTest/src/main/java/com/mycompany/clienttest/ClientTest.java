@@ -8,9 +8,9 @@ package com.mycompany.clienttest;
  *
  * @author User
  */
-public class ClientTest {
+public class ClientTest{
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         Finestra finestra = new Finestra();
         finestra.setVisible(true);
     }
